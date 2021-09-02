@@ -23,7 +23,7 @@
   <FILE>BlindOpeningAlarmClock.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <d3_on><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>9</LINE></d3_on>
-  <end><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>17</LINE></end>
+  <start><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>7</LINE></start>
+  <end><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>15</LINE></end>
  </LABELS>
 </ASSEMBLER_INFO>

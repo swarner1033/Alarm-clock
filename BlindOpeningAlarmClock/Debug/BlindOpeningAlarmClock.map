@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm Thu Sep 02 16:07:16 2021
+AVRASM ver. 2.2.7  C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm Thu Sep 02 16:38:12 2021
 
 
 EQU  SIGNATURE_000 0000001e
@@ -696,6 +696,5 @@ EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 DEF  t0           r16
-DEF  t1           r17
-CSEG d3_on        00000000
-CSEG end          00000006
+CSEG start        00000000
+CSEG end          00000004

@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm Thu Sep 02 16:38:12 2021
+AVRASM ver. 2.2.7  C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm Fri Sep 03 19:16:12 2021
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\avrasm\inc\m328pdef.inc'
 C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm(2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\avrasm\inc\m328Pdef.inc'
@@ -988,14 +988,139 @@ C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClo
                                  ; ***** END OF FILE ******************************************************
                                  .list
                                  
+                                 
+                                 
+                                 .dseg
+000100                           hour:			.byte 1
+000101                           minute:			.byte 1	
+000102                           second:			.byte 1
+000103                           timer_ticks:	.byte 2
+                                 
+                                 
+                                 
+                                 .cseg
+                                 
+                                 .equ ticks_in_second = 15625
+                                 
+                                 
                                  .def t0 = r16
+                                 .def t1 = r17
+                                 .def t2 = r18
+                                 
+                                 .org XRAMEND	
+000000 c039                      	rjmp reset
+                                 .org OVF0addr
+000020 c000                      	rjmp timer_overflow
+                                 
+                                 
+                                 
+                                 ;Clear two bytes in data memory
+                                 .macro clrTwoByte 
+                                 	ldi		xl, low(@0)
+                                 	ldi		xh, high(@0)
+                                 	clr		t0
+                                 	st		x+, t0
+                                 	st		x, t0
+                                 .endmacro
+                                 
+                                 ; check_timer is a macro that will automatically check if a function should run based on a timer given as input
+                                 ; the timer is a pair being the counter in memory and a constant to compare against
+                                 ; e.g. to call this macro:
+                                 ; check_timer update_lift, twoSecTimer, twoSec
+                                 ; this says call update_lift when the value in twoSecTimer (a memory location) is equal to the constant twoSec
+                                 .macro check_timer
+                                 	lds		t0, @1
+                                 	lds		t1, @1 + 1
+                                 
+                                 	ldi		t2, high(@2)
+                                 
+                                 	cpi		t0, low(@2)
+                                 	cpc		t1, t2
+                                 
+                                 	brne	check_timer_skip
+                                 
+                                 	clr		t0
+                                 	sts		@1, t0
+                                 	sts		@1 + 1, t0
+                                 	
+                                 	rcall	@0
+                                 
+                                 	rjmp	check_timer_end
+                                 
+                                 check_timer_skip:
+                                 	ldi		t2, 1
+                                 	add		t0, t2
+                                 	clr		t2
+                                 	adc		t1, t2
+                                 
+                                 	sts		@1, t0
+                                 	sts		@1 + 1, t1
+                                 
+                                 check_timer_end:
+                                 .endmacro
+                                 
+                                 timer_overflow:
+000021 930f                      	push t0
+                                 
+000022 9100 0103
+000024 9110 0104
+000026 e32d
+000027 3009
+000028 0712
+000029 f439
+00002a 2700
+00002b 9300 0103
+00002d 9300 0104
+00002f d00a
+000030 c008
+000031 e021
+000032 0f02
+000033 2722
+000034 1f12
+000035 9300 0103
+000037 9310 0104                 	check_timer	inc_sec, timer_ticks, ticks_in_second
+                                 
+000039 910f                      	pop	t0
+                                 
+                                 inc_sec:
+                                 	
+                                 
+                                 
+                                 reset:
+                                 ;Motor control output on D3 and D5
+00003a e208                      	ldi t0, (1<<PORTD3) | (1<<PORTD5)
+00003b b90a                      	out DDRD, t0
+                                 
+                                 ;Prescale clock by 16MHz/1024=15,625Hz
+00003c e005                      	ldi t0, (1<<CS00) | (1<<CS02)
+00003d bd05                      	out TCCR0B, t0
+                                 
+                                 ;Enable timer overflow interupts
+00003e e001                      	ldi t0, (1<<TOIE0)
+00003f 9300 006e                 	sts TIMSK0, t0 
+                                 
+                                 ;Enable global interupts
+000041 9478                      	sei
+                                 
+                                 ;Clear 8-bit Timer/Counter0 with PWM
+000042 2700                      	clr t0
+000043 bd06                      	out	TCNT0, t0
+                                 	
+                                 ;Clear time buffers
+000044 9300 0100                 	sts	hour, t0
+000046 9300 0101                 	sts minute, t0
+000048 9300 0102                 	sts	second, t0
+00004a e0a3
+00004b e0b1
+00004c 2700
+00004d 930d
+00004e 930c                      	clrTwoByte timer_ticks, t0
+                                 
+                                 
                                  
                                  start:
-                                 ;Turn on PD3 and PD5
-000000 e208                      	ldi t0, (1<<PORTD3) | (1<<PORTD5)
-000001 b90a                      	out DDRD, t0
-000002 e200                      	ldi t0, (0<<PORTD3) | (1<<PORTD5)
-000003 b90b                      	out PORTD, t0
+00004f e200                      	ldi t0, (0<<PORTD3) | (1<<PORTD5)
+000050 b90b                      	out PORTD, t0
                                  
                                  
                                  end:
@@ -1016,40 +1141,40 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega328P" register use summary:
-x  :   0 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
+x  :   2 y  :   0 z  :   0 r0 :   0 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16:   4 r17:   0 r18:   0 r19:   0 r20:   0 
-r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   0 r27:   0 r28:   0 
+r13:   0 r14:   0 r15:   0 r16:  25 r17:   4 r18:   6 r19:   0 r20:   0 
+r21:   0 r22:   0 r23:   0 r24:   0 r25:   0 r26:   1 r27:   1 r28:   0 
 r29:   0 r30:   0 r31:   0 
-Registers used: 1 out of 35 (2.9%)
+Registers used: 6 out of 35 (17.1%)
 
 "ATmega328P" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   0 add   :   0 adiw  :   0 and   :   0 
+.lds  :   0 .sts  :   0 adc   :   1 add   :   1 adiw  :   0 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
 brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
-brne  :   0 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
+brne  :   1 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   0 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
-clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :   0 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
+clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   4 cls   :   0 
+clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   1 
+cpi   :   1 cpse  :   0 dec   :   0 eor   :   0 fmul  :   0 fmuls :   0 
 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 jmp   :   0 
-ld    :   0 ldd   :   0 ldi   :   2 lds   :   0 lpm   :   0 lsl   :   0 
+ld    :   0 ldd   :   0 ldi   :   8 lds   :   2 lpm   :   0 lsl   :   0 
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
-neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   2 pop   :   0 
-push  :   0 rcall :   0 ret   :   0 reti  :   0 rjmp  :   1 rol   :   0 
+neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   4 pop   :   1 
+push  :   1 rcall :   1 ret   :   0 reti  :   0 rjmp  :   4 rol   :   0 
 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 seh   :   0 
-sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
-sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   0 
+sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
+sez   :   0 sleep :   0 spm   :   0 st    :   2 std   :   0 sts   :   8 
 sub   :   0 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
-Instructions used: 3 out of 113 (2.7%)
+Instructions used: 16 out of 113 (14.2%)
 
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00000a     10      0     10   32768   0.0%
-[.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
+[.cseg] 0x000000 0x0000a4    102      0    102   32768   0.3%
+[.dseg] 0x000100 0x000105      0      5      5    2048   0.2%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
 Assembly complete, 0 errors, 0 warnings

@@ -23,7 +23,16 @@
   <FILE>BlindOpeningAlarmClock.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <start><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>7</LINE></start>
-  <end><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>15</LINE></end>
+  <hour><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>8</LINE></hour>
+  <minute><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>9</LINE></minute>
+  <second><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>10</LINE></second>
+  <timer_ticks><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>11</LINE></timer_ticks>
+  <reset><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>95</LINE></reset>
+  <timer_overflow><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>78</LINE></timer_overflow>
+  <inc_sec><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>85</LINE></inc_sec>
+  <inc_min><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>88</LINE></inc_min>
+  <inc_hr><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>91</LINE></inc_hr>
+  <start><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>123</LINE></start>
+  <end><FILE>C:\Users\Sophie Warner\Desktop\alarm\BlindOpeningAlarmClock\BlindOpeningAlarmClock\main.asm</FILE><LINE>128</LINE></end>
  </LABELS>
 </ASSEMBLER_INFO>
